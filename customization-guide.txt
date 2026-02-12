@@ -1,0 +1,103 @@
+# HostABD Customization Guide
+
+This guide provides an overview of the project structure and explains how to customize the website.
+
+## Project Structure
+
+The project is a monorepo with two main parts:
+
+- `/frontend`: A Next.js application that handles the user interface.
+- `/backend`: An Express.js application that provides the REST API.
+
+---
+
+## Frontend Customization (`/frontend`)
+
+All frontend code is located in the `frontend` directory.
+
+### 1. Branding
+
+- **Site Name:** To change the site name "HostABD", edit the `Header.tsx` and `Footer.tsx` components located in `frontend/src/components/layout/`.
+- **Logo:** You can replace the text-based logo in `Header.tsx` with your own image-based logo.
+
+### 2. Styling
+
+- **Colors and Fonts:** The color scheme and fonts are defined in `frontend/tailwind.config.ts`. You can modify the `theme` object to change the site's appearance. The primary font is set in `frontend/src/app/layout.tsx`.
+- **Global Styles:** Global CSS styles are located in `frontend/src/app/globals.css`.
+
+### 3. Public Pages
+
+The public pages are located in the `frontend/src/app/` directory. Each page is a `page.tsx` file inside a folder with the same name as the route.
+
+- **Home Page:** `frontend/src/app/page.tsx`
+- **VPS Hosting Page:** `frontend/src/app/vps-hosting/page.tsx`
+- **RDP Hosting Page:** `frontend/src/app/rdp-hosting/page.tsx`
+- **About Page:** `frontend/src/app/about/page.tsx`
+- ...and so on.
+
+To edit the content of a page, simply open the corresponding `page.tsx` file and modify the JSX.
+
+### 4. Reusable Components
+
+Reusable components are located in `frontend/src/components/`.
+
+- **Layout:** `Header.tsx`, `Footer.tsx`
+- **Pricing Table:** `PricingTable.tsx`
+- **Authentication:** `PrivateRoute.tsx`
+
+### 5. Dashboard
+
+The customer and admin dashboard pages are located in `frontend/src/app/dashboard/`.
+
+- **Customer Dashboard:** `frontend/src/app/dashboard/services/`, `invoices/`, `tickets/`
+- **Admin Dashboard:** `frontend/src/app/dashboard/admin/`
+
+These pages currently use placeholder data. To connect them to the backend API, you will need to:
+1.  Use `fetch` to make API calls to the corresponding backend endpoints.
+2.  Use a state management solution like the provided `useAuthStore` (or a new store) to manage the data.
+3.  Create an API utility file to centralize your API calls and include the JWT token in the headers.
+
+---
+
+## Backend Customization (`/backend`)
+
+All backend code is located in the `backend` directory.
+
+### 1. API Endpoints
+
+The API endpoints are defined in the `backend/src/routes/` directory. Each feature has its own route file (e.g., `productRoutes.ts`). The logic for each endpoint is located in the corresponding controller file in `backend/src/controllers/` (e.g., `productController.ts`).
+
+### 2. Database Models
+
+The Mongoose schemas for the database models are located in `backend/src/models/`. You can modify these files to change the database structure.
+
+### 3. Automation
+
+The Proxmox automation logic is located in `backend/src/automation/proxmox.ts`. This is currently a placeholder. To implement the full automation, you will need to:
+1.  Install a Proxmox API client library (e.g., `proxmox-api`).
+2.  Update the `createVm` function to make real API calls to your Proxmox server.
+3.  Store your Proxmox API credentials securely in the `.env` file.
+
+### 4. Environment Variables
+
+The backend uses a `.env` file for configuration. You can copy the `.env.example` file to create your own `.env` file.
+
+- `MONGO_URI`: Your MongoDB connection string.
+- `JWT_SECRET`: A secret key for signing JWTs.
+- `PORT`: The port for the backend server.
+- `PROXMOX_API_URL`: The URL of your Proxmox server's API.
+- `PROXMOX_API_TOKEN`: Your Proxmox API token.
+
+---
+
+## Adding a New Feature
+
+To add a new feature (e.g., a new type of hosting plan):
+
+1.  **Backend:**
+    -   Update the `Product.ts` model in `backend/src/models/` to include the new plan type.
+    -   Update the `productController.ts` to handle the new plan type.
+2.  **Frontend:**
+    -   Create a new page for the new hosting plan in `frontend/src/app/`.
+    -   Add a link to the new page in the `Header.tsx` component.
+    -   Use the `PricingTable.tsx` component to display the new plans.
